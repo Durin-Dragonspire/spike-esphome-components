@@ -1,0 +1,16 @@
+{
+  "component": "fingerprint_grow",
+  "component_version": "1.0.0",
+  "files": {
+    "LICENSE": "b438130624406724d4309f29d0dcdb53ec7d9a0b81f1f251a4e09ea109f28dbd",
+    "components/fingerprint_grow/__init__.py": "e3929e3bdc4ae42114945c165aeaa73bd1ebe09c59ff2fa8850759702ce74cfd",
+    "components/fingerprint_grow/binary_sensor.py": "ac3f83279959cd7f7858a1fb5eb90c293d700ea44ca931fc4847fd08c373cd51",
+    "components/fingerprint_grow/fingerprint_grow.cpp": "64fd72e5f5371325630d9ae4124bdecb2ee5c80a56fcdf375cb39f3d7c5bfff5",
+    "components/fingerprint_grow/fingerprint_grow.h": "f16ff276784413d0cc8e07554f79be435fb7e3ae15e27b6c36053c6095420d22",
+    "components/fingerprint_grow/sensor.py": "2196e949369ee80904b9b6b8491f1451c0dd8b3ecfe4dae25cef536282f16051"
+  },
+  "protocol_version": 1,
+  "release_commit": "pending-publication",
+  "release_tag": "fingerprint-grow-v1.0.0",
+  "repository": "https://github.com/Durin-Dragonspire/spike-esphome-components"
+}
