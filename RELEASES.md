@@ -1,5 +1,18 @@
 # Releases
 
+## fingerprint-grow-v2.1.0
+
+- Component version: `2.1.0`
+- Component runtime-control ABI: `2`
+- Firmware/Home Assistant status handshake: `2`
+- Status: published
+- Tag commit: `d1c4149d0fe9aa3553a0f84b4ab16b47e8ebb6a0`
+
+This additive release keeps the ABI 2 runtime-control surface and adds
+`spike_advance` so Home Assistant can persist each provisioning stage before
+the next module NVM write. GitHub enhanced mode and local-copy enhanced mode
+compile this same artifact.
+
 ## fingerprint-grow-v2.0.0
 
 - Component version: `2.0.0`
