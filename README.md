@@ -6,22 +6,28 @@ repository history, configuration, credentials, or runtime data.
 
 ## Fingerprint Grow
 
-Use immutable release `fingerprint-grow-v1.0.0` from ESPHome:
+Use immutable release `fingerprint-grow-v2.0.0` from ESPHome:
 
 ```yaml
 external_components:
   - source:
       type: git
       url: https://github.com/Durin-Dragonspire/spike-esphome-components.git
-      ref: fingerprint-grow-v1.0.0
+      ref: fingerprint-grow-v2.0.0
     components:
       - fingerprint_grow
     refresh: never
 ```
 
-The release manifest records the component version, protocol version, release
-tag, and SHA-256 digest of every distributed file. See `RELEASES.md` before
-upgrading an installed reader.
+The already-published `fingerprint-grow-v1.0.0` tag remains available for
+YAML generated against that release. Do not move or rewrite either tag.
+
+The release manifest records the component version, component runtime-control
+ABI, firmware/Home Assistant handshake version, release tag, and SHA-256 digest
+of every distributed file. Those two protocol numbers are separate contracts:
+the integration-generated YAML may advance its status handshake without
+rewriting this immutable component tag. See `RELEASES.md` before upgrading an
+installed reader.
 
 ## Repository lifecycle
 
