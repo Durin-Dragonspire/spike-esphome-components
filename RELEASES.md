@@ -1,5 +1,19 @@
 # Releases
 
+## fingerprint-grow-v2.4.0
+
+- Component version: `2.4.0`
+- Component runtime-control ABI: `2`
+- Firmware/Home Assistant status handshake: `2`
+- Status: published
+- Tag commit: `aa32d12f219fcf52a560baab6e554a98dc6dd538`
+
+This release accepts checksum-valid Grow ACK packets from a configured module
+address when a discovery request uses the `FFFFFFFF` broadcast address. A valid
+ACK from an unexpected address during a non-broadcast operation is reported as
+`wrong_address`. GitHub enhanced mode and local-copy enhanced mode compile this
+same artifact.
+
 ## fingerprint-grow-v2.3.0
 
 - Component version: `2.3.0`
