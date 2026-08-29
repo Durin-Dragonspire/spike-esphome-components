@@ -1,5 +1,18 @@
 # Releases
 
+## fingerprint-grow-v2.3.0
+
+- Component version: `2.3.0`
+- Component runtime-control ABI: `2`
+- Firmware/Home Assistant status handshake: `2`
+- Status: published
+- Tag commit: `2cd03e0e82932480e5a076fd6da835c5a233d512`
+
+This release distinguishes a truly silent UART timeout from a byte stream that
+never forms a valid Grow ACK packet. Malformed or echoed bytes are reported as
+`malformed_module_response` instead of being misreported as no module response.
+GitHub enhanced mode and local-copy enhanced mode compile this same artifact.
+
 ## fingerprint-grow-v2.2.0
 
 - Component version: `2.2.0`
