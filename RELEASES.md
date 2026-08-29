@@ -1,5 +1,19 @@
 # Releases
 
+## fingerprint-grow-v2.2.0
+
+- Component version: `2.2.0`
+- Component runtime-control ABI: `2`
+- Firmware/Home Assistant status handshake: `2`
+- Status: published
+- Tag commit: `720e62b4ff1a05fb95f87570dd4955f6837ce01c`
+
+This release rejects impossible ACK lengths and validates every Grow UART ACK
+checksum before using its confirmation code or payload. Corrupt frames are
+reported as malformed module responses instead of authentication or UART
+failures. GitHub enhanced mode and local-copy enhanced mode compile this same
+artifact.
+
 ## fingerprint-grow-v2.1.0
 
 - Component version: `2.1.0`
