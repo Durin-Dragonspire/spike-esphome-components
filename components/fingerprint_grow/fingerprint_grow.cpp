@@ -373,14 +373,25 @@ bool FingerprintGrowComponent::set_module_address_(uint32_t address) {
 }
 
 bool FingerprintGrowComponent::probe_security_(uint32_t password, uint32_t address) {
+  const uint32_t previous_address =
+      ((uint32_t) this->address_[0] << 24) | ((uint32_t) this->address_[1] << 16) |
+      ((uint32_t) this->address_[2] << 8) | this->address_[3];
+  const uint32_t previous_password = this->password_;
+  const bool previous_security_ready = this->security_ready_;
   this->set_address(address);
   this->password_ = password;
-  if (!this->check_password_())
+  if (!this->check_password_()) {
+    this->set_address(previous_address);
+    this->password_ = previous_password;
+    this->security_ready_ = previous_security_ready;
     return false;
+  }
   this->security_ready_ = true;
   this->spike_security_state_ = "security_pair_authenticated";
   if (!this->get_parameters_()) {
-    this->security_ready_ = false;
+    this->set_address(previous_address);
+    this->password_ = previous_password;
+    this->security_ready_ = previous_security_ready;
     this->spike_last_result_ = "module_parameter_read_failed";
     this->spike_security_state_ = "grow_initialization_failed";
     return false;
@@ -738,6 +749,12 @@ void FingerprintGrowComponent::aura_led_control(uint8_t state, uint8_t speed, ui
 }
 
 uint8_t FingerprintGrowComponent::transfer_(std::vector<uint8_t> &data_buffer) {
+  const uint8_t request_command = data_buffer.empty() ? 0U : data_buffer[0];
+  const uint32_t requested_new_address =
+      request_command == SET_ADDRESS && data_buffer.size() >= 5U
+          ? ((uint32_t) data_buffer[1] << 24) | ((uint32_t) data_buffer[2] << 16) |
+                ((uint32_t) data_buffer[3] << 8) | data_buffer[4]
+          : 0U;
   while (this->available())
     this->read();
   this->write((uint8_t) (START_CODE >> 8));
@@ -835,7 +852,16 @@ uint8_t FingerprintGrowComponent::transfer_(std::vector<uint8_t> &data_buffer) {
             this->last_transfer_ms_ = millis();
             return BAD_PACKET;
           }
-          if (response_address_mismatch && !broadcast_address) {
+          const uint32_t response_address_value =
+              ((uint32_t) response_address[0] << 24) |
+              ((uint32_t) response_address[1] << 16) |
+              ((uint32_t) response_address[2] << 8) |
+              response_address[3];
+          // SetAdder implementations differ: some acknowledge with the old
+          // address and others immediately use the newly written address.
+          const bool new_address_ack =
+              request_command == SET_ADDRESS && response_address_value == requested_new_address;
+          if (response_address_mismatch && !broadcast_address && !new_address_ack) {
             ESP_LOGE(TAG, "Fingerprint module ACK address does not match the requested address");
             data_buffer.clear();
             data_buffer.push_back(ADDRESS_MISMATCH);
@@ -843,12 +869,7 @@ uint8_t FingerprintGrowComponent::transfer_(std::vector<uint8_t> &data_buffer) {
             return ADDRESS_MISMATCH;
           }
           if (broadcast_address) {
-            const uint32_t configured_address =
-                ((uint32_t) response_address[0] << 24) |
-                ((uint32_t) response_address[1] << 16) |
-                ((uint32_t) response_address[2] << 8) |
-                response_address[3];
-            this->set_address(configured_address);
+            this->set_address(response_address_value);
           }
           data_buffer.resize(payload_size);
           switch (data_buffer[0]) {
