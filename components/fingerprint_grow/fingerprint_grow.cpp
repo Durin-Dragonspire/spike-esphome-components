@@ -273,6 +273,7 @@ bool FingerprintGrowComponent::check_password_() {
       this->spike_last_result_ = "security_tuple_no_response";
       return false;
     case ADDRESS_MISMATCH:
+    case ADDRESS_CODE_INCORRECT:
       ESP_LOGE(TAG, "Fingerprint module answered from an unexpected address");
       this->spike_last_result_ = "wrong_address";
       return false;
@@ -863,6 +864,7 @@ uint8_t FingerprintGrowComponent::transfer_(std::vector<uint8_t> &data_buffer) {
             case DELETE_FAIL:
             case DB_CLEAR_FAIL:
             case PASSWORD_FAIL:
+            case ADDRESS_CODE_INCORRECT:
             case INVALID_IMAGE:
             case FLASH_ERR:
               break;
