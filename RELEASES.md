@@ -1,5 +1,19 @@
 # Releases
 
+## fingerprint-grow-v2.5.0
+
+- Component version: `2.5.0`
+- Component runtime-control ABI: `2`
+- Firmware/Home Assistant status handshake: `2`
+- Status: published
+- Tag commit: `208ac8c154a0a25aaab43434a9bca820126ad616`
+
+This release adopts the configured module address from a checksum-valid ACK
+after broadcast authentication. Recovery and factory-security reset can
+therefore continue using the module's actual address instead of falsely
+treating the broadcast request address as its persisted address. GitHub
+enhanced mode and local-copy enhanced mode compile this same artifact.
+
 ## fingerprint-grow-v2.4.0
 
 - Component version: `2.4.0`
