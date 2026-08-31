@@ -381,7 +381,15 @@ bool FingerprintGrowComponent::probe_security_(uint32_t password, uint32_t addre
   this->set_address(address);
   this->password_ = password;
   this->spike_address_discovery_active_ = true;
-  const bool authenticated = this->check_password_();
+  bool authenticated = this->check_password_();
+  if (!authenticated && this->spike_last_result_ == "wrong_address" &&
+      this->spike_module_address() != address) {
+    // Confirmation 0x20 still carries the module's actual address in the ACK
+    // header. Retry the same password there before discarding the read-only
+    // probe; otherwise every valid known tuple at a stale address is skipped.
+    ESP_LOGD(TAG, "Retrying password probe at the address reported by the module");
+    authenticated = this->check_password_();
+  }
   this->spike_address_discovery_active_ = false;
   if (!authenticated) {
     this->set_address(previous_address);
