@@ -1,5 +1,18 @@
 # Releases
 
+## fingerprint-grow-v2.9.0
+
+- Component version: `2.9.0`
+- Component runtime-control ABI: `2`
+- Firmware/Home Assistant status handshake: `2`
+- Status: published
+- Tag commit: `b7042057762f5fca61b9b4faadcaa43a98482b23`
+
+This release completes read-only interrupted-address recovery. When a module
+returns confirmation `0x20`, SPIKE retries the same known password once at the
+address carried by the checksum-valid ACK before rejecting that tuple. No
+module NVM is changed during address or credential discovery.
+
 ## fingerprint-grow-v2.5.0
 
 - Component version: `2.5.0`
