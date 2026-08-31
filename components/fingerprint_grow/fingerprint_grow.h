@@ -185,6 +185,10 @@ class FingerprintGrowComponent final : public PollingComponent, public uart::UAR
   const std::string &spike_occupied_slots() const { return this->spike_occupied_slots_; }
   uint16_t spike_capacity() const { return this->capacity_; }
   uint16_t spike_security_level() const { return this->security_level_; }
+  uint32_t spike_module_address() const {
+    return ((uint32_t) this->address_[0] << 24) | ((uint32_t) this->address_[1] << 16) |
+           ((uint32_t) this->address_[2] << 8) | this->address_[3];
+  }
   void spike_fail(const std::string &reason) {
     this->spike_last_result_ = reason;
     this->spike_security_state_ = "error";
@@ -230,6 +234,9 @@ class FingerprintGrowComponent final : public PollingComponent, public uart::UAR
   uint32_t last_aura_led_duration_ = 0;
   uint16_t system_identifier_code_ = 0;
   bool security_ready_ = false;
+  // Only read-only security probes may learn the address carried by a valid
+  // ACK. Normal commands remain pinned to the configured module address.
+  bool spike_address_discovery_active_ = false;
   uint16_t last_match_slot_ = ENROLLMENT_SLOT_UNUSED;
   uint32_t last_match_ms_ = 0;
   std::string spike_last_result_{"unverified"};

@@ -380,7 +380,10 @@ bool FingerprintGrowComponent::probe_security_(uint32_t password, uint32_t addre
   const bool previous_security_ready = this->security_ready_;
   this->set_address(address);
   this->password_ = password;
-  if (!this->check_password_()) {
+  this->spike_address_discovery_active_ = true;
+  const bool authenticated = this->check_password_();
+  this->spike_address_discovery_active_ = false;
+  if (!authenticated) {
     this->set_address(previous_address);
     this->password_ = previous_password;
     this->security_ready_ = previous_security_ready;
@@ -861,14 +864,16 @@ uint8_t FingerprintGrowComponent::transfer_(std::vector<uint8_t> &data_buffer) {
           // address and others immediately use the newly written address.
           const bool new_address_ack =
               request_command == SET_ADDRESS && response_address_value == requested_new_address;
-          if (response_address_mismatch && !broadcast_address && !new_address_ack) {
+          const bool discovery_ack =
+              this->spike_address_discovery_active_ && request_command == VERIFY_PASSWORD;
+          if (response_address_mismatch && !broadcast_address && !new_address_ack && !discovery_ack) {
             ESP_LOGE(TAG, "Fingerprint module ACK address does not match the requested address");
             data_buffer.clear();
             data_buffer.push_back(ADDRESS_MISMATCH);
             this->last_transfer_ms_ = millis();
             return ADDRESS_MISMATCH;
           }
-          if (broadcast_address) {
+          if (broadcast_address || discovery_ack) {
             this->set_address(response_address_value);
           }
           data_buffer.resize(payload_size);
