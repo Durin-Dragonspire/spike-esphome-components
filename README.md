@@ -6,14 +6,15 @@ repository history, configuration, credentials, or runtime data.
 
 ## Fingerprint Grow
 
-Use immutable release `fingerprint-grow-v2.9.0` from ESPHome:
+Release `fingerprint-grow-v2.10.0` is published with enrollment correlation and
+detailed failure results. Use its immutable tag with this GitHub source block:
 
 ```yaml
 external_components:
   - source:
       type: git
       url: https://github.com/Durin-Dragonspire/spike-esphome-components.git
-      ref: fingerprint-grow-v2.9.0
+      ref: fingerprint-grow-v2.10.0
     components:
       - fingerprint_grow
     refresh: never

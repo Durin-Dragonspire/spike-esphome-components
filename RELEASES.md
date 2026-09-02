@@ -1,5 +1,20 @@
 # Releases
 
+## fingerprint-grow-v2.10.0
+
+- Component version: `2.10.0`
+- Component runtime-control ABI: `2`
+- Firmware/Home Assistant status handshake: `2`
+- Generated contract revision: `4`
+- Status: published
+- Tag commit: `8b8881e3ebb18143ade5f54bea647f9e1fb4b829`
+
+This additive release correlates every enrollment progress, completion, and
+failure callback with the opaque active enrollment ID. Failed enrollment
+callbacks also include the bounded Grow result code so SPIKE can distinguish a
+normal scan mismatch from image, slot, flash, or sensor failures. Existing
+runtime module-protection operations and the component ABI remain compatible.
+
 ## fingerprint-grow-v2.9.0
 
 - Component version: `2.9.0`
@@ -10,8 +25,21 @@
 
 This release completes read-only interrupted-address recovery. When a module
 returns confirmation `0x20`, SPIKE retries the same known password once at the
-address carried by the checksum-valid ACK before rejecting that tuple. No
-module NVM is changed during address or credential discovery.
+address carried by the checksum-valid ACK before rejecting that vault tuple.
+No module NVM is changed during address or credential discovery.
+
+## fingerprint-grow-v2.8.0
+
+- Component version: `2.8.0`
+- Component runtime-control ABI: `2`
+- Firmware/Home Assistant status handshake: `2`
+- Status: published
+- Tag commit: `6f0e598d9fabeb722e873eb9325dfa6823bd1dbd`
+
+This release lets read-only password verification adopt the checksum-valid
+address carried by a Grow ACK. Recovery can therefore authenticate a module
+whose address changed during an interrupted setup while ordinary commands
+remain strictly pinned to the configured address.
 
 ## fingerprint-grow-v2.5.0
 
