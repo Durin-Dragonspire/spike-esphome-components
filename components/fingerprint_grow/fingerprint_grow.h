@@ -163,7 +163,8 @@ class FingerprintGrowComponent final : public PollingComponent, public uart::UAR
     this->enrollment_failed_callback_.add(std::forward<F>(callback));
   }
 
-  void enroll_fingerprint(uint16_t finger_id, uint8_t num_buffers);
+  void enroll_fingerprint(uint16_t finger_id, uint8_t num_buffers, const std::string &enrollment_id = {});
+  void cancel_enrollment(const std::string &enrollment_id = {});
   void finish_enrollment(uint8_t result);
   void delete_fingerprint(uint16_t finger_id);
   void delete_all_fingerprints();
@@ -225,6 +226,7 @@ class FingerprintGrowComponent final : public PollingComponent, public uart::UAR
   uint8_t enrollment_image_ = 0;
   uint16_t enrollment_slot_ = ENROLLMENT_SLOT_UNUSED;
   uint8_t enrollment_buffers_ = 5;
+  std::string enrollment_id_{};
   bool waiting_removal_ = false;
   bool has_sensing_pin_ = false;
   bool has_power_pin_ = false;
@@ -255,9 +257,9 @@ class FingerprintGrowComponent final : public PollingComponent, public uart::UAR
   CallbackManager<void(uint16_t, uint16_t)> finger_scan_matched_callback_;
   CallbackManager<void()> finger_scan_unmatched_callback_;
   CallbackManager<void()> finger_scan_misplaced_callback_;
-  CallbackManager<void(uint8_t, uint16_t)> enrollment_scan_callback_;
-  CallbackManager<void(uint16_t)> enrollment_done_callback_;
-  CallbackManager<void(uint16_t)> enrollment_failed_callback_;
+  CallbackManager<void(uint8_t, uint16_t, std::string)> enrollment_scan_callback_;
+  CallbackManager<void(uint16_t, std::string)> enrollment_done_callback_;
+  CallbackManager<void(uint16_t, uint8_t, std::string)> enrollment_failed_callback_;
 };
 
 template<typename... Ts>
@@ -265,14 +267,16 @@ class EnrollmentAction final : public Action<Ts...>, public Parented<Fingerprint
  public:
   TEMPLATABLE_VALUE(uint16_t, finger_id)
   TEMPLATABLE_VALUE(uint8_t, num_scans)
+  TEMPLATABLE_VALUE(std::string, enrollment_id)
 
   void play(const Ts &...x) override {
     auto finger_id = this->finger_id_.value(x...);
     auto num_scans = this->num_scans_.value(x...);
+    auto enrollment_id = this->enrollment_id_.value(x...);
     if (num_scans) {
-      this->parent_->enroll_fingerprint(finger_id, num_scans);
+      this->parent_->enroll_fingerprint(finger_id, num_scans, enrollment_id);
     } else {
-      this->parent_->enroll_fingerprint(finger_id, 2);
+      this->parent_->enroll_fingerprint(finger_id, 2, enrollment_id);
     }
   }
 };
@@ -280,7 +284,9 @@ class EnrollmentAction final : public Action<Ts...>, public Parented<Fingerprint
 template<typename... Ts>
 class CancelEnrollmentAction final : public Action<Ts...>, public Parented<FingerprintGrowComponent> {
  public:
-  void play(const Ts &...x) override { this->parent_->finish_enrollment(1); }
+  TEMPLATABLE_VALUE(std::string, enrollment_id)
+
+  void play(const Ts &...x) override { this->parent_->cancel_enrollment(this->enrollment_id_.value(x...)); }
 };
 
 template<typename... Ts> class DeleteAction final : public Action<Ts...>, public Parented<FingerprintGrowComponent> {

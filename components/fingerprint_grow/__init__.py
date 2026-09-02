@@ -29,6 +29,7 @@ AUTO_LOAD = ["binary_sensor", "sensor"]
 MULTI_CONF = True
 
 CONF_FINGERPRINT_GROW_ID = "fingerprint_grow_id"
+CONF_ENROLLMENT_ID = "enrollment_id"
 CONF_SENSOR_POWER_PIN = "sensor_power_pin"
 CONF_IDLE_PERIOD_TO_SLEEP = "idle_period_to_sleep"
 
@@ -139,17 +140,25 @@ _CALLBACK_AUTOMATIONS = (
     automation.CallbackAutomation(
         CONF_ON_ENROLLMENT_SCAN,
         "add_on_enrollment_scan_callback",
-        [(cg.uint8, "scan_num"), (cg.uint16, "finger_id")],
+        [
+            (cg.uint8, "scan_num"),
+            (cg.uint16, "finger_id"),
+            (cg.std_string, "enrollment_id"),
+        ],
     ),
     automation.CallbackAutomation(
         CONF_ON_ENROLLMENT_DONE,
         "add_on_enrollment_done_callback",
-        [(cg.uint16, "finger_id")],
+        [(cg.uint16, "finger_id"), (cg.std_string, "enrollment_id")],
     ),
     automation.CallbackAutomation(
         CONF_ON_ENROLLMENT_FAILED,
         "add_on_enrollment_failed_callback",
-        [(cg.uint16, "finger_id")],
+        [
+            (cg.uint16, "finger_id"),
+            (cg.uint8, "failure_code"),
+            (cg.std_string, "enrollment_id"),
+        ],
     ),
 )
 
@@ -189,6 +198,7 @@ async def to_code(config):
             cv.GenerateID(): cv.use_id(FingerprintGrowComponent),
             cv.Required(CONF_FINGER_ID): cv.templatable(cv.uint16_t),
             cv.Optional(CONF_NUM_SCANS): cv.templatable(cv.uint8_t),
+            cv.Optional(CONF_ENROLLMENT_ID): cv.templatable(cv.string_strict),
         },
         key=CONF_FINGER_ID,
     ),
@@ -203,6 +213,9 @@ async def fingerprint_grow_enroll_to_code(config, action_id, template_arg, args)
     if CONF_NUM_SCANS in config:
         template_ = await cg.templatable(config[CONF_NUM_SCANS], args, cg.uint8)
         cg.add(var.set_num_scans(template_))
+    if CONF_ENROLLMENT_ID in config:
+        template_ = await cg.templatable(config[CONF_ENROLLMENT_ID], args, cg.std_string)
+        cg.add(var.set_enrollment_id(template_))
     return var
 
 
@@ -212,6 +225,7 @@ async def fingerprint_grow_enroll_to_code(config, action_id, template_arg, args)
     cv.Schema(
         {
             cv.GenerateID(): cv.use_id(FingerprintGrowComponent),
+            cv.Optional(CONF_ENROLLMENT_ID): cv.templatable(cv.string_strict),
         }
     ),
     synchronous=True,
@@ -219,6 +233,9 @@ async def fingerprint_grow_enroll_to_code(config, action_id, template_arg, args)
 async def fingerprint_grow_cancel_enroll_to_code(config, action_id, template_arg, args):
     var = cg.new_Pvariable(action_id, template_arg)
     await cg.register_parented(var, config[CONF_ID])
+    if CONF_ENROLLMENT_ID in config:
+        template_ = await cg.templatable(config[CONF_ENROLLMENT_ID], args, cg.std_string)
+        cg.add(var.set_enrollment_id(template_))
     return var
 
 

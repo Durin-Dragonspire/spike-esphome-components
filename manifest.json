@@ -1,13 +1,13 @@
 {
   "component": "fingerprint_grow",
   "component_protocol_version": 2,
-  "component_version": "2.9.0",
+  "component_version": "2.10.0",
   "files": {
     "LICENSE": "b438130624406724d4309f29d0dcdb53ec7d9a0b81f1f251a4e09ea109f28dbd",
-    "components/fingerprint_grow/__init__.py": "e3929e3bdc4ae42114945c165aeaa73bd1ebe09c59ff2fa8850759702ce74cfd",
+    "components/fingerprint_grow/__init__.py": "e3b0e3ad3cc7a490b14b5413cce80d332ac64ced137c1be7d2fdb58da01ad008",
     "components/fingerprint_grow/binary_sensor.py": "ac3f83279959cd7f7858a1fb5eb90c293d700ea44ca931fc4847fd08c373cd51",
-    "components/fingerprint_grow/fingerprint_grow.cpp": "78fc428b844e11c7b87c4f7f53d8e1f3e229e64cdc608b62c0fd7fdb51d988ca",
-    "components/fingerprint_grow/fingerprint_grow.h": "fe49888b5796484b9b61521ef3692482544f5fbaf79800f73724e47dc159b5b2",
+    "components/fingerprint_grow/fingerprint_grow.cpp": "3ad033d0a4422be47714a25d276138a030eb8e14b79fcb3e2c11fa181fe656b9",
+    "components/fingerprint_grow/fingerprint_grow.h": "df584663fb08d5d76a9cdd71217ef2586540e4ff1093a4e8ee735d2eb4f1975d",
     "components/fingerprint_grow/sensor.py": "2196e949369ee80904b9b6b8491f1451c0dd8b3ecfe4dae25cef536282f16051"
   },
   "firmware_protocol_version": 2,
@@ -15,6 +15,6 @@
   "protocol_version": 2,
   "release_commit": "",
   "release_status": "published",
-  "release_tag": "fingerprint-grow-v2.9.0",
+  "release_tag": "fingerprint-grow-v2.10.0",
   "repository": "https://github.com/Durin-Dragonspire/spike-esphome-components"
 }

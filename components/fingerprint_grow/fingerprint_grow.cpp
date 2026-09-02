@@ -55,7 +55,8 @@ void FingerprintGrowComponent::update() {
     this->finish_enrollment(result);
     return;
   }
-  this->enrollment_scan_callback_.call(this->enrollment_image_, this->enrollment_slot_);
+  this->enrollment_scan_callback_.call(
+      this->enrollment_image_, this->enrollment_slot_, this->enrollment_id_);
   ++this->enrollment_image_;
 }
 
@@ -115,29 +116,41 @@ void FingerprintGrowComponent::setup() {
   ESP_LOGW(TAG, "Fingerprint module awaits runtime identity verification");
 }
 
-void FingerprintGrowComponent::enroll_fingerprint(uint16_t finger_id, uint8_t num_buffers) {
+void FingerprintGrowComponent::enroll_fingerprint(uint16_t finger_id, uint8_t num_buffers,
+                                                  const std::string &enrollment_id) {
   ESP_LOGI(TAG, "Starting enrollment in slot %d", finger_id);
   if (this->enrolling_binary_sensor_ != nullptr) {
     this->enrolling_binary_sensor_->publish_state(true);
   }
   this->enrollment_slot_ = finger_id;
   this->enrollment_buffers_ = num_buffers;
+  this->enrollment_id_ = enrollment_id;
   this->enrollment_image_ = 1;
 }
 
+void FingerprintGrowComponent::cancel_enrollment(const std::string &enrollment_id) {
+  if (this->enrollment_slot_ == ENROLLMENT_SLOT_UNUSED)
+    return;
+  if (!enrollment_id.empty() && enrollment_id != this->enrollment_id_)
+    return;
+  this->finish_enrollment(1);
+}
+
 void FingerprintGrowComponent::finish_enrollment(uint8_t result) {
+  const std::string enrollment_id = this->enrollment_id_;
   if (result == OK) {
     this->get_fingerprint_count_();
     if (this->security_ready_)
       this->spike_refresh_inventory();
-    this->enrollment_done_callback_.call(this->enrollment_slot_);
+    this->enrollment_done_callback_.call(this->enrollment_slot_, enrollment_id);
   } else {
     if (this->enrollment_slot_ != ENROLLMENT_SLOT_UNUSED) {
-      this->enrollment_failed_callback_.call(this->enrollment_slot_);
+      this->enrollment_failed_callback_.call(this->enrollment_slot_, result, enrollment_id);
     }
   }
   this->enrollment_image_ = 0;
   this->enrollment_slot_ = ENROLLMENT_SLOT_UNUSED;
+  this->enrollment_id_.clear();
   if (this->enrolling_binary_sensor_ != nullptr) {
     this->enrolling_binary_sensor_->publish_state(false);
   }
